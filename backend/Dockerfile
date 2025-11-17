@@ -11,7 +11,8 @@ RUN apt-get update && apt-get install -y \
     zip \
     unzip \
     && docker-php-ext-install pdo_mysql mbstring exif pcntl bcmath gd zip \
-    && docker-php-ext-enable zip
+    && docker-php-ext-enable zip \
+    && rm -rf /var/lib/apt/lists/*
 
 # Установка Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
@@ -19,11 +20,17 @@ COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 # Установка рабочей директории
 WORKDIR /var/www
 
-# Копирование файлов
+# Копирование composer файлов для кеширования зависимостей
+COPY composer.json composer.lock ./
+
+# Установка зависимостей (кешируется если composer.json не изменился)
+RUN composer install --optimize-autoloader --no-dev --no-interaction --no-scripts
+
+# Копирование остальных файлов
 COPY . .
 
-# Установка зависимостей
-RUN composer install --optimize-autoloader --no-dev --no-interaction
+# Запуск post-install скриптов
+RUN composer dump-autoload --optimize
 
 # Установка прав
 RUN chmod -R 755 /var/www/storage \
