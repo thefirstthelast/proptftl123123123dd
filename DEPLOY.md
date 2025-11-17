@@ -221,7 +221,16 @@ pm2 restart propozly-new
    - Build Command: `npm run build`
    - Output Directory: `.output/public`
    - Environment Variables:
-     - `NUXT_PUBLIC_API_BASE`: URL вашего бэкенда
+     - `NUXT_PUBLIC_API_BASE`: URL вашего бэкенда (например: `https://api.yourdomain.com`)
+   
+   **ВАЖНО:** После деплоя на Vercel обязательно настройте переменные окружения на бэкенде:
+   - `FRONTEND_URL`: URL вашего фронтенда на Vercel
+   - `CORS_ALLOWED_ORIGINS`: URL фронтенда (через запятую, если несколько)
+   - `SANCTUM_STATEFUL_DOMAINS`: домен фронтенда без протокола (через запятую)
+   - `SESSION_SAME_SITE=none`
+   - `SESSION_SECURE_COOKIE=true`
+   
+   Подробные инструкции см. в файле `VERCEL_SETUP.md`
 
 2. **Netlify**:
    - Аналогично Vercel

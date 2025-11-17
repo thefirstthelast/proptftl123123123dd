@@ -33,20 +33,34 @@ QUEUE_CONNECTION=sync
 SESSION_DRIVER=database
 SESSION_LIFETIME=120
 
-FRONTEND_URL=https://yourdomain.com
-SANCTUM_STATEFUL_DOMAINS=yourdomain.com
-CORS_ALLOWED_ORIGINS=https://yourdomain.com
-
-SESSION_DOMAIN=.yourdomain.com
+# Для Vercel (cross-origin) используйте:
+FRONTEND_URL=https://your-app.vercel.app
+SANCTUM_STATEFUL_DOMAINS=your-app.vercel.app
+CORS_ALLOWED_ORIGINS=https://your-app.vercel.app
+SESSION_SAME_SITE=none
 SESSION_SECURE_COOKIE=true
-SESSION_SAME_SITE=lax
+SESSION_DOMAIN=
+
+# Для одного домена (если фронтенд и бэкенд на поддоменах):
+# FRONTEND_URL=https://yourdomain.com
+# SANCTUM_STATEFUL_DOMAINS=yourdomain.com
+# CORS_ALLOWED_ORIGINS=https://yourdomain.com
+# SESSION_DOMAIN=.yourdomain.com
+# SESSION_SECURE_COOKIE=true
+# SESSION_SAME_SITE=lax
 ```
 
 ## Переменные окружения для Frontend
 
+### На Vercel (Settings → Environment Variables):
 ```env
 NUXT_PUBLIC_API_BASE=https://api.yourdomain.com
 ```
+
+**Важно:** 
+- Замените на реальный URL вашего бэкенда
+- Не добавляйте слэш в конце
+- После добавления переменных пересоберите проект (Redeploy)
 
 ## После деплоя проверьте
 
@@ -82,10 +96,14 @@ curl https://api.yourdomain.com/api/auth/user
 - Проверьте, что `FRONTEND_URL` и `SANCTUM_STATEFUL_DOMAINS` совпадают с реальным доменом фронтенда
 - Убедитесь, что фронтенд и бэкенд на одном домене или правильно настроен CORS
 - Проверьте, что cookies не блокируются браузером
+- **Для Vercel:** Убедитесь, что `SESSION_SAME_SITE=none` и `SESSION_SECURE_COOKIE=true`
+- Проверьте, что домен фронтенда добавлен в `SANCTUM_STATEFUL_DOMAINS` (без протокола, например: `your-app.vercel.app`)
 
 ### CORS ошибки
-- Проверьте `CORS_ALLOWED_ORIGINS` в бэкенде
-- Убедитесь, что `supports_credentials: true` в CORS конфиге
+- Проверьте `CORS_ALLOWED_ORIGINS` в бэкенде (должен содержать URL фронтенда с протоколом)
+- Убедитесь, что `supports_credentials: true` в CORS конфиге (уже настроено)
+- **Для Vercel:** Добавьте домен Vercel в `CORS_ALLOWED_ORIGINS` (например: `https://your-app.vercel.app`)
+- Проверьте, что запросы идут с правильным заголовком `Origin`
 
 ### База данных не работает
 - Проверьте подключение к БД
