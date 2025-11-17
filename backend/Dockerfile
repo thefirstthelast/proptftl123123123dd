@@ -27,19 +27,15 @@ WORKDIR /var/www
 # Копирование composer файлов для кеширования зависимостей
 COPY composer.json composer.lock ./
 
-# Копирование auth.json для Nova authentication
-# Используем COPY с wildcard, который не упадет если файла нет
-COPY auth.json* ./
-
-# Проверка и настройка аутентификации Nova
-RUN if [ -f auth.json ]; then \
-        echo "✓ Found auth.json, using it for Nova authentication"; \
-        cat auth.json; \
-    elif [ -n "$NOVA_USERNAME" ] && [ -n "$NOVA_PASSWORD" ]; then \
-        echo "✓ Configuring Nova auth from build args"; \
+# Настройка аутентификации Nova из переменных окружения Railway
+# Railway автоматически передает переменные окружения как build args
+RUN if [ -n "$NOVA_USERNAME" ] && [ -n "$NOVA_PASSWORD" ]; then \
+        echo "✓ Configuring Nova auth from Railway variables"; \
         composer config --auth http-basic.nova.laravel.com "$NOVA_USERNAME" "$NOVA_PASSWORD"; \
     else \
-        echo "✗ WARNING: No Nova credentials found! Trying to continue anyway..."; \
+        echo "✗ WARNING: NOVA_USERNAME or NOVA_PASSWORD not set!"; \
+        echo "Please add NOVA_USERNAME and NOVA_PASSWORD to Railway variables"; \
+        exit 1; \
     fi
 
 # Проверка конфигурации перед установкой
