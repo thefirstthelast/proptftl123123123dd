@@ -25,6 +25,7 @@ WORKDIR /app
 
 # Copy application files (context is backend directory)
 COPY composer.json composer.lock ./
+COPY create-auth.php ./
 COPY app ./app
 COPY bootstrap ./bootstrap
 COPY config ./config
@@ -38,8 +39,7 @@ COPY artisan ./
 
 # Create auth.json for Nova if credentials are provided
 RUN if [ -n "$NOVA_USERNAME" ] && [ -n "$NOVA_PASSWORD" ]; then \
-    php -r "file_put_contents('auth.json', json_encode(['http-basic' => ['nova.laravel.com' => ['username' => '$NOVA_USERNAME', 'password' => '$NOVA_PASSWORD']]], JSON_PRETTY_PRINT)); echo 'Created auth.json from build arguments\n';" \
-    || echo 'Warning: Failed to create auth.json'; \
+    NOVA_USERNAME="$NOVA_USERNAME" NOVA_PASSWORD="$NOVA_PASSWORD" php create-auth.php || echo 'Warning: Failed to create auth.json'; \
     fi
 
 # Install dependencies
