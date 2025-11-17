@@ -1,5 +1,5 @@
 [phases.install]
-nixPkgs = ["php82Extensions.zip"]
+aptPkgs = ["php8.2-zip", "unzip"]
 cmds = [
   "composer install --optimize-autoloader --no-dev --no-interaction"
 ]
