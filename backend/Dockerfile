@@ -19,18 +19,18 @@ COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 # Set working directory
 WORKDIR /app
 
-# Copy backend directory contents
-COPY backend/composer.json backend/composer.lock ./
-COPY backend/app ./app
-COPY backend/bootstrap ./bootstrap
-COPY backend/config ./config
-COPY backend/database ./database
-COPY backend/lang ./lang
-COPY backend/public ./public
-COPY backend/resources ./resources
-COPY backend/routes ./routes
-COPY backend/storage ./storage
-COPY backend/artisan ./
+# Copy application files (context is backend directory)
+COPY composer.json composer.lock ./
+COPY app ./app
+COPY bootstrap ./bootstrap
+COPY config ./config
+COPY database ./database
+COPY lang ./lang
+COPY public ./public
+COPY resources ./resources
+COPY routes ./routes
+COPY storage ./storage
+COPY artisan ./
 
 # Install dependencies
 RUN composer install --optimize-autoloader --no-dev --no-interaction
