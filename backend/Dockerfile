@@ -27,19 +27,21 @@ WORKDIR /var/www
 # Копирование composer файлов для кеширования зависимостей
 COPY composer.json composer.lock ./
 
-# Копирование auth.json если существует (для Nova authentication)
-COPY auth.json* ./
+# Копирование auth.json для Nova authentication (если существует)
+COPY auth.json* ./ || echo "auth.json not found, will use build args"
 
-# Настройка аутентификации Nova
-# Сначала пробуем использовать auth.json, если его нет - используем build args
-RUN if [ -f auth.json ]; then \
-    echo "Using auth.json for Nova authentication"; \
-    cat auth.json; \
+# Проверка и настройка аутентификации Nova
+RUN echo "Checking for auth.json..."; \
+    ls -la auth.json* 2>/dev/null || echo "No auth.json files found"; \
+    if [ -f auth.json ]; then \
+        echo "✓ Found auth.json, using it for Nova authentication"; \
+        cat auth.json; \
     elif [ -n "$NOVA_USERNAME" ] && [ -n "$NOVA_PASSWORD" ]; then \
-    echo "Configuring Nova auth from build args"; \
-    composer config --auth http-basic.nova.laravel.com "$NOVA_USERNAME" "$NOVA_PASSWORD"; \
+        echo "✓ Configuring Nova auth from build args"; \
+        composer config --auth http-basic.nova.laravel.com "$NOVA_USERNAME" "$NOVA_PASSWORD"; \
     else \
-    echo "WARNING: No Nova credentials found!"; \
+        echo "✗ WARNING: No Nova credentials found! This will fail."; \
+        exit 1; \
     fi
 
 # Проверка конфигурации перед установкой
