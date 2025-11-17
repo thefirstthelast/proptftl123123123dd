@@ -16,6 +16,10 @@ RUN apt-get update && apt-get install -y \
 # Install Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
+# Accept build arguments for Nova credentials
+ARG NOVA_USERNAME
+ARG NOVA_PASSWORD
+
 # Set working directory
 WORKDIR /app
 
@@ -31,6 +35,12 @@ COPY resources ./resources
 COPY routes ./routes
 COPY storage ./storage
 COPY artisan ./
+
+# Create auth.json for Nova if credentials are provided
+RUN if [ -n "$NOVA_USERNAME" ] && [ -n "$NOVA_PASSWORD" ]; then \
+    php -r "file_put_contents('auth.json', json_encode(['http-basic' => ['nova.laravel.com' => ['username' => '$NOVA_USERNAME', 'password' => '$NOVA_PASSWORD']]], JSON_PRETTY_PRINT)); echo 'Created auth.json from build arguments\n';" \
+    || echo 'Warning: Failed to create auth.json'; \
+    fi
 
 # Install dependencies
 RUN composer install --optimize-autoloader --no-dev --no-interaction
