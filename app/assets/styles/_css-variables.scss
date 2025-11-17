@@ -1,0 +1,70 @@
+@use "./utils/mixins" as *;
+
+// viewport
+
+:root {
+  --viewport: 1440;
+
+  @include mobile {
+    --viewport: 375;
+  }
+}
+
+// Colors
+:root {
+  --c-white: #fff;
+  --c-black: #000;
+  --c-gray: #f3f5fa;
+
+  --c-base-0: #ffffff;
+  --c-base-0--70: rgba(255, 255, 255, 0.7);
+  --c-base-0--30: rgba(255, 255, 255, 0.3);
+  --c-base-0--20: rgba(255, 255, 255, 0.2);
+  --c-base-0--10: rgba(255, 255, 255, 0.1);
+  --c-base-0--7: rgba(255, 255, 255, 0.07);
+
+  --c-base-1000: #17314a;
+  --c-base-1000--70: rgba(23, 49, 74, 0.7);
+  --c-base-1000--50: rgba(23, 49, 74, 0.5);
+  --c-base-1000--30: rgba(23, 49, 74, 0.3);
+  --c-base-1000--20: rgba(23, 49, 74, 0.2);
+  --c-base-1000--10: rgba(23, 49, 74, 0.1);
+  --c-base-1000--7: rgba(23, 49, 74, 0.07);
+  --c-base-1000--5: rgba(23, 49, 74, 0.05);
+
+  --c-brand-500: #f776be;
+  --c-brand-500--20: rgba(247, 118, 190, 0.2);
+  --c-brand-500--10: rgba(247, 118, 190, 0.1);
+  --c-brand-500--5: rgba(247, 118, 190, 0.05);
+
+  --c-brand: #c65e98;
+
+  --c-add-success-800: #0b421e;
+  --c-add-success-500: #1ba64b;
+  --c-add-success-500--10: rgba(27, 166, 75, 0.1);
+  --c-add-success-100: #e9f7ee;
+
+  --c-add-alert-800: #664300;
+  --c-add-alert-500: #ffa800;
+  --c-add-alert-500--10: rgba(255, 168, 0, 0.1);
+  --c-add-alert-100: #fff7e6;
+
+  --c-add-error-800: #5a1818;
+  --c-add-error-500: #e23d3d;
+  --c-add-error-500--10: rgba(226, 61, 61, 0.1);
+  --c-add-error-100: #fdecec;
+
+  --c-add-accent: #4061f3;
+  --c-add-accent--10: rgba(64, 97, 243, 0.1);
+}
+
+// Fonts
+:root {
+  --font: "Inter", sans-serif;
+}
+
+// Transitions
+
+:root {
+  --ease-default: cubic-bezier(0.4, 0, 0.2, 1);
+}

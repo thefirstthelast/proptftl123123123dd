@@ -1,0 +1,163 @@
+.h1 {
+  font-size: 4rem;
+  line-height: 4rem;
+  letter-spacing: -0.128rem;
+}
+.h1_md {
+  @extend .h1;
+  font-weight: 500;
+}
+.h1_sb {
+  @extend .h1;
+  font-weight: 600;
+}
+
+.h2 {
+  font-size: 3rem;
+  line-height: 3rem;
+  letter-spacing: -0.096rem;
+}
+.h2_md {
+  @extend .h2;
+  font-weight: 500;
+}
+.h2_sb {
+  @extend .h2;
+  font-weight: 600;
+}
+
+.h3 {
+  font-size: 2.5rem;
+  line-height: 2.5rem;
+  letter-spacing: -0.07rem;
+}
+.h3_md {
+  @extend .h3;
+  font-weight: 500;
+}
+.h3_sb {
+  @extend .h3;
+  font-weight: 600;
+}
+
+.h4 {
+  font-size: 2rem;
+  line-height: 2rem;
+  letter-spacing: -0.048rem;
+}
+.h4_md {
+  @extend .h4;
+  font-weight: 500;
+}
+.h4_sb {
+  @extend .h4;
+  font-weight: 600;
+}
+
+.h5 {
+  font-size: 1.5rem;
+  line-height: 1.5rem;
+  letter-spacing: -0.03rem;
+}
+.h5_md {
+  @extend .h5;
+  font-weight: 500;
+}
+.h5_sb {
+  @extend .h5;
+  font-weight: 600;
+}
+
+.h6 {
+  font-size: 1.25rem;
+  line-height: 1.25rem;
+  letter-spacing: -0.02rem;
+}
+.h6_md {
+  @extend .h6;
+  font-weight: 500;
+}
+.h6_sb {
+  @extend .h6;
+  font-weight: 600;
+}
+
+.h7 {
+  font-size: 1rem;
+  line-height: 1.25rem;
+  letter-spacing: -0.012rem;
+}
+.h7_md {
+  @extend .h7;
+  font-weight: 500;
+}
+.h7_sb {
+  @extend .h7;
+  font-weight: 600;
+}
+
+.h8 {
+  font-size: 0.875rem;
+  line-height: 1rem;
+  letter-spacing: -0.007rem;
+}
+.h8_md {
+  @extend .h8;
+  font-weight: 500;
+}
+.h8_sb {
+  @extend .h8;
+  font-weight: 600;
+}
+
+.h9 {
+  font-size: 0.7813rem;
+  line-height: 0.875rem;
+  letter-spacing: -0.0047rem;
+}
+.h9_md {
+  @extend .h9;
+  font-weight: 500;
+}
+.h9_sb {
+  @extend .h9;
+  font-weight: 600;
+}
+
+.h10 {
+  font-size: 0.6875rem;
+  line-height: 0.75rem;
+  letter-spacing: -0.0027rem;
+}
+.h10_md {
+  @extend .h10;
+  font-weight: 500;
+}
+.h10_sb {
+  @extend .h10;
+  font-weight: 600;
+}
+
+.p8 {
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+  letter-spacing: -0.007rem;
+}
+.p8_md {
+  @extend .p8;
+  font-weight: 500;
+}
+.p8_sb {
+  @extend .p8;
+  font-weight: 600;
+}
+
+.p10 {
+  font-feature-settings: "ss03" on, "ss08" on;
+  font-size: 0.6875rem;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 1rem;
+  letter-spacing: -0.0027rem;
+}
+// common classes for typography like .p1, .p2, .H1, .H2 ...

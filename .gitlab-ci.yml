@@ -1,0 +1,39 @@
+variables:
+  PROJ_PATH: "/home/admin/public_html/propozly-new" # path to project on server. Example: "/home/admin/public_html/vylo"
+  NVM_NODE: "v22.21.0" # Node.js version
+  PM2_NAME: "propozly-new" # write a pm2 process name. Example: "vylo-front" or "vylo"
+  GIT_STRATEGY: none
+
+stages: # List of stages for jobs, and their order of execution
+  - deploy_dev
+
+dev-job: # This job runs in the build stage, which runs first.
+  stage: deploy_dev
+  tags:
+    - devserver129
+  only:
+    - DEV
+  variables:
+    BRANCH: "DEV"
+  script:
+    - bash --login
+    - source /etc/profile
+    - source ~/.bashrc
+    - source ~/.nvm/nvm.sh
+    - cd $PROJ_PATH
+    - git add .
+    - if [ "`git branch | grep \*| cut -d ' ' -f2`" == "stable" ]; then git checkout -b tmp; fi
+    - if [ "`git branch --list stable`" ]; then git branch -D stable; fi
+    - if [ "`git diff --cached`" ]; then git commit -m 'before deploy'; fi
+    - git branch -m stable
+    - git fetch origin
+    - if [ "`git branch --list $BRANCH`" ]; then git branch -D $BRANCH; fi
+    - git checkout -b $BRANCH origin/$BRANCH
+    - git checkout $BRANCH
+    - git pull origin $BRANCH:$BRANCH
+    - nvm use $NVM_NODE
+    - npm install
+    - npm run build
+    - pm2 startOrRestart ecosystem.config.cjs
+    - if [ "`git branch --list tmp`" ]; then git branch -D tmp; fi
+    - echo "Successfully deployed"
