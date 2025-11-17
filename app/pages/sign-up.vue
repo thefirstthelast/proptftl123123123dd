@@ -15,9 +15,10 @@
 import type { FormSubmitEvent } from "@nuxt/ui"
 import * as z from "zod"
 
-definePageMeta({
-  middleware: "protect-sign",
-})
+// Убираем middleware protect-sign, чтобы страница была доступна всегда
+// definePageMeta({
+//   middleware: "protect-sign",
+// })
 
 const schema = z
   .object({
@@ -85,7 +86,7 @@ const onSubmit = async (_event: FormSubmitEvent<Schema>) => {
     toast.add({
       title: "Unable to sign up",
       description: error instanceof Error ? error.message : "Please try again.",
-      color: "red",
+      color: "error",
       duration: 5000,
       icon: "i-lucide-alert-triangle",
     })

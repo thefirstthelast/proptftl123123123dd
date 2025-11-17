@@ -101,11 +101,18 @@ export const useAuth = () => {
   const login = async (payload: LoginPayload) => {
     try {
       await csrf()
-      await apiFetch<{ user: User }>("/api/auth/login", {
+      const response = await apiFetch<{ user: User }>("/api/auth/login", {
         method: "POST",
         body: payload,
       })
 
+      // Обновляем состояние
+      user.value = response.user
+      
+      // Синхронизируем с appState (используется в middleware)
+      const appState = useState<{ user: User | null }>("app-state", () => ({ user: null }))
+      appState.value.user = response.user
+      
       await fetchUser()
     } catch (error) {
       throw new Error(parseErrorMessage(error))
@@ -115,11 +122,18 @@ export const useAuth = () => {
   const register = async (payload: RegisterPayload) => {
     try {
       await csrf()
-      await apiFetch<{ user: User }>("/api/auth/register", {
+      const response = await apiFetch<{ user: User }>("/api/auth/register", {
         method: "POST",
         body: payload,
       })
 
+      // Обновляем состояние
+      user.value = response.user
+      
+      // Синхронизируем с appState (используется в middleware)
+      const appState = useState<{ user: User | null }>("app-state", () => ({ user: null }))
+      appState.value.user = response.user
+      
       await fetchUser()
     } catch (error) {
       throw new Error(parseErrorMessage(error))
