@@ -30,15 +30,27 @@ COPY composer.json composer.lock ./
 # Копирование auth.json если существует (для Nova authentication)
 COPY auth.json* ./
 
-# Настройка аутентификации Nova (если credentials предоставлены через build args)
-RUN if [ -n "$NOVA_USERNAME" ] && [ -n "$NOVA_PASSWORD" ]; then \
+# Настройка аутентификации Nova
+# Сначала пробуем использовать auth.json, если его нет - используем build args
+RUN if [ -f auth.json ]; then \
+    echo "Using auth.json for Nova authentication"; \
+    cat auth.json; \
+    elif [ -n "$NOVA_USERNAME" ] && [ -n "$NOVA_PASSWORD" ]; then \
+    echo "Configuring Nova auth from build args"; \
     composer config --auth http-basic.nova.laravel.com "$NOVA_USERNAME" "$NOVA_PASSWORD"; \
+    else \
+    echo "WARNING: No Nova credentials found!"; \
     fi
 
-# Установка зависимостей (кешируется если composer.json не изменился)
-RUN composer install --optimize-autoloader --no-dev --no-interaction --no-scripts || \
-    (echo "Warning: Composer install failed, trying with platform requirements ignored" && \
-     composer install --optimize-autoloader --no-dev --no-interaction --no-scripts --ignore-platform-reqs)
+# Проверка конфигурации перед установкой
+RUN composer config --list | grep -i nova || echo "Nova config not found"
+
+# Установка зависимостей с детальным логированием
+RUN set -eux; \
+    echo "Starting composer install..."; \
+    composer install --optimize-autoloader --no-dev --no-interaction --no-scripts -vvv || \
+    (echo "First attempt failed, retrying with --ignore-platform-reqs..." && \
+     composer install --optimize-autoloader --no-dev --no-interaction --no-scripts --ignore-platform-reqs -vvv)
 
 # Копирование остальных файлов
 COPY . .
