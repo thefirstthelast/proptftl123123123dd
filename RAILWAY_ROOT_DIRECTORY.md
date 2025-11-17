@@ -1,49 +1,46 @@
 # Настройка Root Directory в Railway
 
-## Проблема
+## Правильная настройка
 
-Railway не может найти Dockerfile или файлы, потому что контекст сборки неправильный.
+### Вариант 1: Root Directory = `/` (корень проекта) ✅ РЕКОМЕНДУЕТСЯ
 
-## Решение: Установить Root Directory
+**Root Directory:** `/` (оставьте пустым или укажите `/`)
 
-**ВАЖНО:** Нужно установить Root Directory в настройках Railway на `backend`.
+**Почему:**
+- `railway.json` уже настроен с путем `backend/Dockerfile`
+- Railway найдет Dockerfile по пути `backend/Dockerfile` от корня репозитория
+- Это стандартный подход для монорепозиториев
 
-### Пошаговая инструкция:
+### Вариант 2: Root Directory = `backend`
 
-1. **Откройте Railway Dashboard:**
-   - Зайдите на [railway.app](https://railway.app)
-   - Выберите ваш проект
-   - Выберите сервис с бэкендом
+Если вы установите Root Directory = `backend`, то нужно изменить `railway.json`:
 
-2. **Откройте настройки Deploy:**
-   - Нажмите на сервис
-   - Перейдите в **Settings** (или нажмите на иконку ⚙️)
-   - Выберите вкладку **Deploy** (или **Build**)
+```json
+{
+  "build": {
+    "builder": "DOCKERFILE",
+    "dockerfilePath": "Dockerfile"  // Без backend/
+  }
+}
+```
 
-3. **Установите Root Directory:**
-   - Найдите поле **"Root Directory"** или **"Service Root"**
-   - Введите: `backend`
-   - Сохраните изменения
+---
 
-4. **Обновите railway.json:**
-   - После установки Root Directory, Railway будет использовать `backend/` как корень
-   - Поэтому в `railway.json` нужно указать `dockerfilePath: "Dockerfile"` (без `backend/`)
+## Рекомендация
 
-5. **Пересоберите:**
-   - Railway автоматически пересоберет проект
-   - Или вручную: Deployments → три точки (⋮) → Redeploy
+**Используйте Вариант 1: Root Directory = `/`**
 
-## Альтернатива: Если Root Directory не работает
+В Railway Dashboard:
+1. Зайдите в Settings вашего сервиса
+2. Найдите "Root Directory"
+3. Оставьте **пустым** или укажите `/`
+4. Railway автоматически найдет `backend/Dockerfile` согласно `railway.json`
 
-Если настройка Root Directory не работает, можно:
-
-1. **Переместить Dockerfile в корень проекта** (не рекомендуется, но работает)
-2. **Использовать monorepo настройки Railway**
+---
 
 ## Проверка
 
-После настройки Root Directory:
-- ✅ Railway должен найти Dockerfile в `backend/Dockerfile`
-- ✅ Контекст сборки будет `backend/`
-- ✅ Все пути в Dockerfile будут работать правильно
-
+После настройки Railway должен:
+1. Найти `railway.json` в корне проекта
+2. Прочитать путь к Dockerfile: `backend/Dockerfile`
+3. Использовать этот Dockerfile для сборки
