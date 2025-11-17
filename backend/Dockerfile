@@ -30,28 +30,31 @@ COPY composer.json composer.lock ./
 # Копирование auth.json для Nova authentication
 COPY auth.json* ./
 
-# Настройка аутентификации Nova
-# Сначала пробуем auth.json, потом build args, потом переменные окружения
-RUN if [ -f auth.json ]; then \
+# Настройка аутентификации Nova с детальным логированием
+RUN echo "=== Checking Nova authentication ==="; \
+    ls -la auth.json* 2>/dev/null || echo "No auth.json files found"; \
+    if [ -f auth.json ]; then \
+        echo "✓ Found auth.json, displaying contents:"; \
+        cat auth.json; \
         echo "✓ Using auth.json for Nova authentication"; \
     elif [ -n "$NOVA_USERNAME" ] && [ -n "$NOVA_PASSWORD" ]; then \
         echo "✓ Configuring Nova auth from build args"; \
         composer config --auth http-basic.nova.laravel.com "$NOVA_USERNAME" "$NOVA_PASSWORD"; \
     else \
         echo "✗ ERROR: Nova credentials not found!"; \
-        echo "Please ensure auth.json exists or add NOVA_USERNAME and NOVA_PASSWORD"; \
+        echo "Files in current directory:"; \
+        ls -la; \
         exit 1; \
-    fi
-
-# Проверка конфигурации перед установкой
-RUN composer config --list | grep -i nova || echo "Nova config not found"
+    fi; \
+    echo "=== Checking composer Nova config ==="; \
+    composer config --list | grep -i nova || echo "Nova config not found in composer config"
 
 # Установка зависимостей с детальным логированием
-RUN set -eux; \
-    echo "Starting composer install..."; \
-    composer install --optimize-autoloader --no-dev --no-interaction --no-scripts -vvv || \
-    (echo "First attempt failed, retrying with --ignore-platform-reqs..." && \
-     composer install --optimize-autoloader --no-dev --no-interaction --no-scripts --ignore-platform-reqs -vvv)
+RUN echo "=== Starting composer install ==="; \
+    composer install --optimize-autoloader --no-dev --no-interaction --no-scripts -vvv 2>&1 | head -100 || \
+    (echo "=== First attempt failed, checking error ===" && \
+     echo "=== Retrying with --ignore-platform-reqs ===" && \
+     composer install --optimize-autoloader --no-dev --no-interaction --no-scripts --ignore-platform-reqs -vvv 2>&1 | head -100)
 
 # Копирование остальных файлов
 COPY . .
