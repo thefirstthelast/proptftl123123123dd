@@ -29,7 +29,8 @@ import type { State } from "~~/shared"
 const appState = useState<State>("app-state")
 const csrf = useCookie<string>("XSRF-TOKEN")
 const config = useRuntimeConfig()
-const apiBase = config.public.apiBase || config.public.api_url || "http://localhost:8000"
+// Используем значение из конфига, по умолчанию пустая строка (относительные пути)
+const apiBase = config.public.apiBase || config.public.api_url || ''
 
 const logout = async () => {
   appState.value.user = null
