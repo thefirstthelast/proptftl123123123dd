@@ -27,27 +27,18 @@ WORKDIR /var/www
 # Копирование composer файлов для кеширования зависимостей
 COPY composer.json composer.lock ./
 
-# Копирование auth.json для Nova authentication
-COPY auth.json* ./
-
-# Настройка аутентификации Nova с детальным логированием
-RUN echo "=== Checking Nova authentication ==="; \
-    ls -la auth.json* 2>/dev/null || echo "No auth.json files found"; \
-    if [ -f auth.json ]; then \
-        echo "✓ Found auth.json, displaying contents:"; \
-        cat auth.json; \
-        echo "✓ Using auth.json for Nova authentication"; \
-    elif [ -n "$NOVA_USERNAME" ] && [ -n "$NOVA_PASSWORD" ]; then \
-        echo "✓ Configuring Nova auth from build args"; \
-        composer config --auth http-basic.nova.laravel.com "$NOVA_USERNAME" "$NOVA_PASSWORD"; \
-    else \
-        echo "✗ ERROR: Nova credentials not found!"; \
-        echo "Files in current directory:"; \
-        ls -la; \
+# Настройка аутентификации Nova из переменных окружения Railway
+# Railway передает переменные окружения как build args автоматически
+RUN echo "=== Setting up Nova authentication from Railway variables ==="; \
+    if [ -z "$NOVA_USERNAME" ] || [ -z "$NOVA_PASSWORD" ]; then \
+        echo "✗ ERROR: NOVA_USERNAME or NOVA_PASSWORD not set in Railway variables!"; \
+        echo "Please add NOVA_USERNAME and NOVA_PASSWORD to Railway → Settings → Variables"; \
         exit 1; \
     fi; \
-    echo "=== Checking composer Nova config ==="; \
-    composer config --list | grep -i nova || echo "Nova config not found in composer config"
+    echo "✓ Configuring Nova auth from Railway variables"; \
+    composer config --auth http-basic.nova.laravel.com "$NOVA_USERNAME" "$NOVA_PASSWORD"; \
+    echo "=== Verifying Nova config ==="; \
+    composer config --list | grep -i nova || echo "Nova config not found"
 
 # Установка зависимостей с детальным логированием
 RUN echo "=== Starting composer install ===" && \
