@@ -27,7 +27,10 @@ WORKDIR /var/www
 # Копирование composer файлов для кеширования зависимостей
 COPY composer.json composer.lock ./
 
-# Настройка аутентификации Nova (если credentials предоставлены)
+# Копирование auth.json если существует (для Nova authentication)
+COPY auth.json* ./
+
+# Настройка аутентификации Nova (если credentials предоставлены через build args)
 RUN if [ -n "$NOVA_USERNAME" ] && [ -n "$NOVA_PASSWORD" ]; then \
     composer config --auth http-basic.nova.laravel.com "$NOVA_USERNAME" "$NOVA_PASSWORD"; \
     fi
