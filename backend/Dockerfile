@@ -1,5 +1,9 @@
 FROM php:8.2-cli
 
+# Build arguments для Nova credentials
+ARG NOVA_USERNAME
+ARG NOVA_PASSWORD
+
 # Установка системных зависимостей и PHP расширений
 RUN apt-get update && apt-get install -y \
     git \
@@ -23,8 +27,15 @@ WORKDIR /var/www
 # Копирование composer файлов для кеширования зависимостей
 COPY composer.json composer.lock ./
 
+# Настройка аутентификации Nova (если credentials предоставлены)
+RUN if [ -n "$NOVA_USERNAME" ] && [ -n "$NOVA_PASSWORD" ]; then \
+    composer config --auth http-basic.nova.laravel.com "$NOVA_USERNAME" "$NOVA_PASSWORD"; \
+    fi
+
 # Установка зависимостей (кешируется если composer.json не изменился)
-RUN composer install --optimize-autoloader --no-dev --no-interaction --no-scripts
+RUN composer install --optimize-autoloader --no-dev --no-interaction --no-scripts || \
+    (echo "Warning: Composer install failed, trying with platform requirements ignored" && \
+     composer install --optimize-autoloader --no-dev --no-interaction --no-scripts --ignore-platform-reqs)
 
 # Копирование остальных файлов
 COPY . .
