@@ -105,4 +105,12 @@ class User extends Resource
     {
         return [];
     }
+
+    /**
+     * Determine if the current user can view any resources.
+     */
+    public static function authorizedToViewAny(Request $request): bool
+    {
+        return true;
+    }
 }
