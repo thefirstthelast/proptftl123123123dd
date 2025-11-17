@@ -49,18 +49,25 @@ export const useAuth = () => {
   const apiFetch = <T>(path: string, options: Parameters<typeof $fetch<T>>[1] = {}) => {
     const headers: Record<string, string> = {
       ...(options?.headers as Record<string, string> | undefined),
+      Accept: "application/json",
     }
 
     if (xsrfToken.value) {
       headers["X-XSRF-TOKEN"] = xsrfToken.value
     }
 
-    return $fetch<T>(path, {
-      baseURL: config.public.apiBase,
+    const fetchOptions: Parameters<typeof $fetch<T>>[1] = {
       credentials: "include",
       ...options,
       headers,
-    })
+    }
+
+    // Если baseURL пустой (бэкенд на том же домене), не указываем baseURL
+    if (config.public.apiBase) {
+      fetchOptions.baseURL = config.public.apiBase
+    }
+
+    return $fetch<T>(path, fetchOptions)
   }
 
   const csrf = async () => {

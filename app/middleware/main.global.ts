@@ -4,7 +4,7 @@ export default defineNuxtRouteMiddleware(async (to, from) => {
   const firstLoad = useState<boolean>("first-load")
   const csrf = useCookie<string>("XSRF-TOKEN")
   const config = useRuntimeConfig()
-  const apiBase = config.public.apiBase || config.public.api_url || "http://localhost:8000"
+  const apiBase = config.public.apiBase || config.public.api_url || (process.env.NODE_ENV === 'production' ? '' : 'http://localhost:8000')
   const appState = useState<State>("app-state", () => ({
     user: null,
   }))
@@ -16,10 +16,14 @@ export default defineNuxtRouteMiddleware(async (to, from) => {
 
   try {
     // Get CSRF cookie
-    await $fetch(apiBase + "/sanctum/csrf-cookie")
+    const csrfUrl = apiBase ? `${apiBase}/sanctum/csrf-cookie` : "/sanctum/csrf-cookie"
+    await $fetch(csrfUrl, {
+      credentials: "include",
+    })
 
     // Get user
-    const userResponse = await $fetch<{ user: User }>(apiBase + "/api/auth/user", {
+    const userUrl = apiBase ? `${apiBase}/api/auth/user` : "/api/auth/user"
+    const userResponse = await $fetch<{ user: User }>(userUrl, {
       method: "GET",
       credentials: "include",
       headers: {
