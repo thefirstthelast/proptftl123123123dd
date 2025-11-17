@@ -30,7 +30,8 @@ COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 WORKDIR /var/www
 
 # Копирование composer файлов для кеширования зависимостей
-COPY composer.json composer.lock ./
+# Если Railway использует корень проекта как контекст, используем backend/
+COPY backend/composer.json backend/composer.lock ./
 
 # Настройка аутентификации Nova - ТОЛЬКО из переменных окружения
 # Данные должны быть переданы через Railway Variables (NOVA_USERNAME и NOVA_PASSWORD)
@@ -54,8 +55,9 @@ RUN echo "=== Starting composer install ===" && \
      echo "=== Retrying with --ignore-platform-reqs ===" && \
      composer install --optimize-autoloader --no-dev --no-interaction --no-scripts --ignore-platform-reqs -vvv)
 
-# Копирование остальных файлов
-COPY . .
+# Копирование остальных файлов из backend/
+# Если Railway использует корень проекта как контекст, копируем только backend/
+COPY backend/ .
 
 # Запуск post-install скриптов
 RUN composer dump-autoload --optimize
