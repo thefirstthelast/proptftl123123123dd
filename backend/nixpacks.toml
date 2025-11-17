@@ -1,6 +1,7 @@
 [phases.install]
-aptPkgs = ["php8.2-zip", "unzip"]
 cmds = [
+  "apt-get update -qq && apt-get install -y php8.2-zip unzip || true",
+  "docker-php-ext-install zip || true",
   "composer install --optimize-autoloader --no-dev --no-interaction"
 ]
 
