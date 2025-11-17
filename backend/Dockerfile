@@ -27,8 +27,8 @@ WORKDIR /var/www
 # Копирование composer файлов для кеширования зависимостей
 COPY composer.json composer.lock ./
 
-# Копирование auth.json для Nova authentication (если существует)
-COPY auth.json* ./ 2>/dev/null || true
+# Копирование auth.json для Nova authentication
+COPY auth.json* ./
 
 # Настройка аутентификации Nova
 # Сначала пробуем auth.json, потом build args, потом переменные окружения
