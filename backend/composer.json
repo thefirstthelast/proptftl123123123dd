@@ -35,6 +35,9 @@
         }
     },
     "scripts": {
+        "pre-install-cmd": [
+            "@php -r \"if (getenv('NOVA_USERNAME') && getenv('NOVA_PASSWORD')) { $auth = ['http-basic' => ['nova.laravel.com' => ['username' => trim(getenv('NOVA_USERNAME')), 'password' => trim(getenv('NOVA_PASSWORD'))]]]; file_put_contents('auth.json', json_encode($auth, JSON_PRETTY_PRINT)); echo 'Created auth.json from environment variables\\n'; }\""
+        ],
         "setup": [
             "composer install",
             "@php -r \"file_exists('.env') || copy('.env.example', '.env');\"",
