@@ -50,11 +50,11 @@ RUN echo "=== Checking Nova authentication ==="; \
     composer config --list | grep -i nova || echo "Nova config not found in composer config"
 
 # Установка зависимостей с детальным логированием
-RUN echo "=== Starting composer install ==="; \
-    composer install --optimize-autoloader --no-dev --no-interaction --no-scripts -vvv 2>&1 | head -100 || \
-    (echo "=== First attempt failed, checking error ===" && \
+RUN echo "=== Starting composer install ===" && \
+    composer install --optimize-autoloader --no-dev --no-interaction --no-scripts -vvv || \
+    (echo "=== First attempt failed ===" && \
      echo "=== Retrying with --ignore-platform-reqs ===" && \
-     composer install --optimize-autoloader --no-dev --no-interaction --no-scripts --ignore-platform-reqs -vvv 2>&1 | head -100)
+     composer install --optimize-autoloader --no-dev --no-interaction --no-scripts --ignore-platform-reqs -vvv)
 
 # Копирование остальных файлов
 COPY . .
