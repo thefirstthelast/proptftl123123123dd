@@ -80,9 +80,10 @@ export default defineNuxtConfig({
     public: {
       dev_mode: Boolean(process.env.DEV_MODE),
       // Если бэкенд на том же домене, используем относительные пути или полный URL
-      // Для production: оставьте пустым для относительных путей или укажите полный URL
-      apiBase: process.env.NUXT_PUBLIC_API_BASE || (process.env.NODE_ENV === 'production' ? '' : 'http://localhost:8000'),
-      api_url: process.env.API_URL || process.env.NUXT_PUBLIC_API_BASE || (process.env.NODE_ENV === 'production' ? '' : 'http://localhost:8000'),
+      // По умолчанию используем пустую строку (относительные пути) для production
+      // Только в dev режиме используем localhost
+      apiBase: process.env.NUXT_PUBLIC_API_BASE || (process.env.DEV_MODE === 'true' ? 'http://localhost:8000' : ''),
+      api_url: process.env.API_URL || process.env.NUXT_PUBLIC_API_BASE || (process.env.DEV_MODE === 'true' ? 'http://localhost:8000' : ''),
     },
   },
 });

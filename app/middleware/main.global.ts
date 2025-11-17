@@ -4,7 +4,8 @@ export default defineNuxtRouteMiddleware(async (to, from) => {
   const firstLoad = useState<boolean>("first-load")
   const csrf = useCookie<string>("XSRF-TOKEN")
   const config = useRuntimeConfig()
-  const apiBase = config.public.apiBase || config.public.api_url || (process.env.NODE_ENV === 'production' ? '' : 'http://localhost:8000')
+  // Используем значение из конфига, по умолчанию пустая строка (относительные пути)
+  const apiBase = config.public.apiBase || config.public.api_url || ''
   const appState = useState<State>("app-state", () => ({
     user: null,
   }))
